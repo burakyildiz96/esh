@@ -1,0 +1,51 @@
+const ilkButonXPath = '//button[text()="Braden"]';
+const ikinciButonXPaths = [
+  '//*[@id="rdDuygusalAlgilama"]//label[text()="Bozulma yok"]',
+  '//*[@id="rdNem"]//label[text()="Çok Nemli"]',
+  '//*[@id="rdAktivite"]//label[text()="Yatağa Bağımlı"]',
+  '//*[@id="rdHareketlilik"]//label[text()="Çok Sınırlı"]',
+  '//*[@id="rdBeslenme"]//label[text()="Yeterli"]',
+  '//*[@id="rdSurtunmeYirtilma"]//label[text()="Potansiyel Problem"]',
+  '//*[@id="btnKaydet"]',
+  // Add more XPaths for additional secondary buttons
+];
+const bekle = 1500; // Delay in milliseconds (0.5 seconds)
+
+const clickIkinciButonInIframe = () => {
+  const iframe = document.evaluate('//div[@id="pageslide"]/iframe', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+  if (iframe) {
+    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+
+    ikinciButonXPaths.forEach((xpath) => {
+      const ikinciButon = iframeDocument.evaluate(xpath, iframeDocument, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      if (ikinciButon) {
+        ikinciButon.click();
+      } else {
+        console.error(`Second button with XPath '${xpath}' not found in the iframe`);
+      }
+    });
+
+    // After clicking secondary buttons, click the first button again
+    setTimeout(() => {
+      const ilkButon = document.evaluate(ilkButonXPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      if (ilkButon) {
+        ilkButon.click();
+      } else {
+        console.error('First button not found');
+      }
+    }, bekle * (ikinciButonXPaths.length + 1)); // Add delay for the number of secondary buttons clicked
+  } else {
+    console.error('Iframe not found');
+  }
+};
+
+const ilkButon = document.evaluate(ilkButonXPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+if (ilkButon) {
+  ilkButon.click();
+
+  setTimeout(clickIkinciButonInIframe, bekle);
+} else {
+  console.error('First button not found');
+}

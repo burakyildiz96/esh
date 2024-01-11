@@ -1,0 +1,52 @@
+const xpaths = [
+
+"(//*[@id=\"DigerBilgiler\"]//label[contains(text(),\"Evde sağlık hizmetleri alan hastaların sosyal hakları\")])",
+"(//*[@id=\"DigerBilgiler\"]//label[contains(text(),\" Diğer\")]/input[@name=\"ddlIzlemPsikolojikDurumDegerlendirmesi\"]/parent::label)",
+
+"(//*[@id=\"ctl00_ContentPlaceHolder1_rdGenelDurum\"]//label[text()=\"Orta\"])",
+"(//*[@id=\"ctl00_ContentPlaceHolder1_rdSuur\"]//label[text()=\"Açık\"])",
+"(//*[@id=\"ctl00_ContentPlaceHolder1_rdOryantasyon\"]//label[text()=\"Bozuk\"])",
+"(//*[@id=\"ctl00_ContentPlaceHolder1_rdKooperasyon\"]//label[text()=\"Normal\"])",
+"(//*[@id=\"ctl00_ContentPlaceHolder1_rdDeri\"]//label[text()=\"Doğal Renkte(Nemli)\"])",
+"(//*[@id=\"ctl00_ContentPlaceHolder1_rdBeslenmeBozuklugu\"]//label[text()=\"Yok\"])",
+
+"(//*[@id=\"ctl00_ContentPlaceHolder1_rdIzlemHastaNakli\"]//label[text()=\"Yok\"])",
+
+"(//*[@id=\"ctl00_ContentPlaceHolder1_rblOSDB_IdrarSondasi\"]//label[text()=\"Yok\"])",
+"(//*[@id=\"ctl00_ContentPlaceHolder1_rblOSDB_Oksijen\"]//label[text()=\"Yok\"])",
+"(//*[@id=\"ctl00_ContentPlaceHolder1_rblOSDB_SolunumCihazi\"]//label[text()=\"Bağlı Değil\"])",
+"(//*[@id=\"ctl00_ContentPlaceHolder1_rblOSDB_Trakeostomi\"]//label[text()=\"Yok\"])",
+"(//*[@id=\"ctl00_ContentPlaceHolder1_rblOSDB_AgizdanBeslenme\"]//label[text()=\"Var\"])",
+"(//*[@id=\"ctl00_ContentPlaceHolder1_rblOSDB_Peg\"]//label[text()=\"Yok\"])",
+"(//*[@id=\"ctl00_ContentPlaceHolder1_rblOSDB_Ng\"]//label[text()=\"Yok\"])",
+];
+const delay = 1; // Delay in milliseconds (0.5 seconds)
+
+xpaths.forEach((xpath, index) => {
+    setTimeout(() => {
+        document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.click();
+    }, index * delay);
+});
+
+//ziyaret notu
+
+const textareaXPath = '//*[@id="ctl00_ContentPlaceHolder1_tbZiyaretNotu"]';
+const textToFill = 'vitaller stabil. aciller anlatıldı.'; // Text to fill in the textarea
+
+const fillTextarea = () => {
+  const textarea = document.evaluate(textareaXPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+  
+  if (textarea) {
+    textarea.value = textToFill;
+    // Trigger an 'input' event to simulate user input (optional, use if needed)
+    const inputEvent = new Event('input', {
+      bubbles: true,
+      cancelable: true,
+    });
+    textarea.dispatchEvent(inputEvent);
+  } else {
+    console.error('Textarea not found');
+  }
+};
+
+fillTextarea();

@@ -1,0 +1,52 @@
+const ilkButonminiXPath = '//button[text()="Mini Mna"]';
+const ikinciButonminiXPaths = [
+  '//*[@id="rdSindirimSorunu"]//label[text()="Besin alımında düşüş yok"]',
+  '//*[@id="rdKiloKaybi"]//label[text()="Bilinmiyor"]',
+  '//*[@id="rdHareketlilik"]//label[contains(text(),"ataktan, sandalyeden kalkabiliyor ama evden dışarıya çıkamıyor")]',
+  '//*[@id="rdPsikolojikStres"]//label[text()="Hayır"]',
+  '//*[@id="rdNoropsikolojik"]//label[text()="Hafif düzeyde bunama"]',
+  '//*[@id="rdVki"]//label[text()="VKİ 23 ve üzeri"]',
+  '//*[@id="btnKaydet"]',
+  '//*[@id="btnKaydet"]'
+  // Add more XPaths for additional secondary buttons
+];
+const beklemini = 2500; // Delay in milliseconds (0.5 seconds)
+
+const clickIkinciButonminiInIframe = () => {
+  const iframe = document.evaluate('//div[@id="pageslide"]/iframe', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+  if (iframe) {
+    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+
+    ikinciButonminiXPaths.forEach((xpath) => {
+      const ikinciButonmini = iframeDocument.evaluate(xpath, iframeDocument, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      if (ikinciButonmini) {
+        ikinciButonmini.click();
+      } else {
+        console.error(`Second button with XPath '${xpath}' not found in the iframe`);
+      }
+    });
+
+    // After clicking secondary buttons, click the first button again
+    setTimeout(() => {
+      const ilkButonmini = document.evaluate(ilkButonminiXPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      if (ilkButonmini) {
+        ilkButonmini.click();
+      } else {
+        console.error('First button not found');
+      }
+    }, beklemini * (ikinciButonminiXPaths.length + 1)); // Add delay for the number of secondary buttons clicked
+  } else {
+    console.error('Iframe not found');
+  }
+};
+
+const ilkButonmini = document.evaluate(ilkButonminiXPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+if (ilkButonmini) {
+  ilkButonmini.click();
+
+  setTimeout(clickIkinciButonminiInIframe, beklemini);
+} else {
+  console.error('First button not found');
+}
